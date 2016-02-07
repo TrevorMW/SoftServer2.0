@@ -2,20 +2,32 @@
 
 class TemplateHelper
 {
-  public static function render_template( $path = null, $name = null, array $params = null )
+  public function get_template( $path = null, $name = null, array $params = null )
   {
-    $templates = array();
+    $html = '';
+
     if ( isset( $name ) )
-      $templates[] = "/views/{$path}/{$name}.php";
-
-    $templates[] = "/views/{$path}/{$slug}.php";
-
-    $_template_file = locate_template( $templates, false, false );
+      $template = "{$path}{$name}.php";
 
     if ( is_array( $params ) )
       extract( $params, EXTR_SKIP );
 
-    require( $_template_file );
+    include( $template );
   }
 
+  public static function render_template( $path = null, $name = null, array $params = null )
+  {
+    $html = '';
+
+    ob_start();
+
+    $template = new TemplateHelper();
+    $template->get_template( $path, $name, $params );
+
+    $html .= ob_get_contents();
+
+    ob_get_clean();
+
+    return $html;
+  }
 }

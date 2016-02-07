@@ -9,15 +9,10 @@ class Product
   public $has_discount;
   public $sku;
 
+  public $type_information;
+
   public function __construct( $id )
   {
-    global $ssdb;
 
-    if( $ssdb instanceOf PDO && is_int( $id ) )
-    {
-      $sql = '';
-
-      $ssdb->exec( $sql );
-    }
   }
 }

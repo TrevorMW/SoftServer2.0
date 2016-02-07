@@ -9,22 +9,14 @@
  */
 function start_up_ice_cream_machine()
 {
-  $db   = new DB();
-  $cart = new Cart();
+  $db              = new DB();
+  $GLOBALS['ssdb'] = $db->instance;
 
-  $GLOBALS['ssdb'] = $db;
-  $GLOBALS['cart'] = $cart;
+  $GLOBALS['cart'] = new Cart();
+  $GLOBALS['type'] = new ProductType();
 
-  build_application_tables();
+  build_application_tables( $db->instance );
 }
-
-function load_ajax_dependencies()
-{
-  $db = new DB();
-
-  $GLOBALS['ssdb'] = $db;
-}
-
 
 /**
  * Poor man's magikul autoloader.
@@ -49,46 +41,56 @@ function __autoload( $classname )
  * @access public
  * @return void
  */
-function build_application_tables()
+function build_application_tables( PDO $conn )
 {
-  global $ssdb;
-
-  if( $ssdb instanceof PDO && $ssdb->errors == null )
+  if( $conn instanceof PDO )
   {
-    // CREATE PRODUCT TYPES TABLE
-    $table_name = TABLE_PREFIX.'_product_types';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name (
-      type_id INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
-      type_name VARCHAR ( 125 ) NOT NULL,
+    $tables = array( 'product_type'        => 'type_id         INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                               type_name       VARCHAR (125) NOT NULL',
 
-    )" );
+                     'product_ingredients' => 'product_id      INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                               type_name       VARCHAR (125) NOT NULL',
 
-    // CREATE PRODUCT TABLE
-    $table_name = TABLE_PREFIX.'_product';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'ingredients'         => 'ingredient_id   INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                               ingredient_name VARCHAR (125) NOT NULL,
+                                               ingredient_type INT (11)      NOT NULL',
 
-    // CREATE CART TABLE
-    $table_name = TABLE_PREFIX.'_cart';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'ingredient_type'    => 'type_id         INT(11)       AUTO_INCREMENT PRIMARY KEY,
+                                              type_name       VARCHAR (125) NOT NULL',
 
-    // CREATE ORDERS TABLE
-    $table_name = TABLE_PREFIX.'_orders';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'users'              => 'user_id         INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                              user_name       VARCHAR (125) NOT NULL,
+                                              user_pass       VARCHAR (150) NOT NULL',
 
-    // CREATE FLAVORS TABLE
-    $table_name = TABLE_PREFIX.'_flavors';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'coupons'            => 'coupon_id       INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                              user_id         INT (11)      NOT NULL,
+                                              coupon_code     VARCHAR (50)  NOT NULL,
+                                              coupon_discount INT (11)      NOT NULL ',
 
-    // CREATE SODAS TABLE
-    $table_name = TABLE_PREFIX.'_sodas';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'cart'               => 'cart_id         INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                              product_type    INT (11)      NOT NULL',
 
-    // CREATE MILK TABLE
-    $table_name = TABLE_PREFIX.'_milk';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'orders'             => 'order_id        INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                              order_user_id   INT (11)      NOT NULL',
 
-    // CREATE CONTAINERS TABLE
-    $table_name = TABLE_PREFIX.'_containers';
-    $ssdb->exec( "CREATE TABLE IF NOT EXISTS $table_name ( )" );
+                     'order_products'     => 'order_id        INT (11)      AUTO_INCREMENT PRIMARY KEY,
+                                              product_id      INT (11)      NOT NULL',
+                   );
+
+    foreach( $tables as $table_name => $fields )
+    {
+      $sql = "CREATE TABLE IF NOT EXISTS `".TABLE_PREFIX."$table_name` ( $fields ); ";
+
+      try
+      {
+        $conn->exec( $sql );
+      }
+      catch( PDOException $e )
+      {
+        echo $e->getMessage();//Remove or change message in production code
+      }
+    }
+
+
   }
 }

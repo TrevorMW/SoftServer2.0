@@ -2,24 +2,19 @@
 
 class db
 {
-  private $host    = 'mysql:host=localhost; db_name=';
-  private $db_name = DB_NAME;
-  private $db_user = DB_USER;
-  private $db_pass = DB_PASSWORD;
   private $errors  = null;
-
-  private static $instance;
+  public  $instance;
 
 	public function __construct()
 	{
   	try
   	{
-    	$pdo = new PDO( $this->host.$this->db_name , $this->db_user, $this->db_pass );
+    	$pdo = new PDO( 'mysql:host=localhost; db_name='.DB_NAME , DB_USER, DB_PASSWORD );
   	  $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
   		$pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, false );
+  		$pdo->exec('USE '. DB_NAME.';');
 
-  		if( $pdo instanceOf PDO )
-  	    $this->instance = $pdo;
+  	  $this->instance = $pdo;
   	}
   	catch ( PDOException $e )
   	{
