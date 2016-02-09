@@ -6,7 +6,7 @@ if( $action != null && $fields != null )
               <div data-form-msg></div>
               <ul>
                 '.$fields.'
-                <button type="submit" class="btn btn-primary">Create '.$type_name.'</button>
+                <button type="submit" class="btn btn-primary">Create '.ucfirst( $type_name ).'</button>
               </ul>
             </form>';
 }

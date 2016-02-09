@@ -170,15 +170,15 @@ class Product_Type
           $fields .= '<input type="hidden" name="product_type" value="'.$product_type->product_type_id.'" />
                       <li>
                         <select name="ingredients[container]">
-                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 4 ) ).'
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 4 ), 'Select a Container'  ).'
                         </select>
                       </li>
                       <li>
                         <select name="ingredients[ice_cream][]">
-                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ) ).'
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ), 'Select a Flavor' ).'
                         </select>
                       </li>
-                      <a href="#" data-ajax-get data-action="add_field" data-extra-data="ice_cream">Add Another Flavor!</a> ';
+                      <li class="submit"><a href="#" data-ajax-get data-action="add_field" data-extra-data="ice_cream">Add Another Flavor!</a></li>';
 
 
         break;

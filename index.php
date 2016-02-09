@@ -1,4 +1,4 @@
-<?php error_reporting(0); session_start();
+<?php error_reporting(-1); session_start();
 
 /** SoftServer
  *  version 0.0.1
@@ -7,9 +7,12 @@
  */
 require_once( 'functions.php' );
 
-global $product_type, $cart, $user, $app;
+global $product_type, $cart;
 
-$cart_items = $cart->get_cart_count(); ?>
+$user = new User( $_SESSION['current_user'] );
+
+$cart_items   = $cart->get_cart_count();
+$current_user = User::load_current_user() ?>
 
 <!DOCTYPE html>
 <html>
@@ -26,10 +29,10 @@ $cart_items = $cart->get_cart_count(); ?>
 
   <body>
 
-    <?php if( isset( $_SESSION['current_user'] ) ) { ?>
+    <?php if( $current_user instanceOf User ) { ?>
 
       <div class="wrap main-body">
-        <a href="#" data-flyout-trigger data-async-content="load_cart_count"><i class="fa fa-fw fa-shopping-cart"></i>( <?php echo $cart->get_cart_count() ?> )</a>
+        <a href="#" data-flyout-trigger data-async-content="load_cart_count"><i class="fa fa-fw fa-shopping-cart"></i>( <?php echo $cart_items ?> )</a>
         <div class="table" data-loader><div class="table-cell"><i class="fa fa-spin fa-cog"></i></div></div>
         <div class="wrapper table">
           <div class="table-cell">
@@ -44,8 +47,9 @@ $cart_items = $cart->get_cart_count(); ?>
           </div>
         </div>
       </div>
-      <div class="wrap cart" data-flyout data-async-content="load_cart_data" data-load-when="deferred">
+      <div class="wrap cart" data-flyout data-async-content="load_cart_data" data-load-when="deferred" data-target="cart-contents">
         <a href="#" data-destroy-flyout><i class="fa fa-fw fa-times"></i></a>
+        <div data-updateable-content="cart-contents"></div>
       </div>
 
     <?php } else { ?>

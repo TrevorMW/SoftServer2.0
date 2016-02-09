@@ -38,7 +38,7 @@ class Form_Helper
       {
         case 'select' :
 
-          $html = '<select name="'.$field_data['name'].'" '.$field_data['data_attr'].'>'.self::build_select_options( $field_data['val'] ).'</select>';
+          $html = '<select name="'.$field_data['name'].'" '.$field_data['data_attr'].'>'.self::build_select_options( $field_data['val'], $field_data['placeholder'] ).'</select>';
 
         break;
 

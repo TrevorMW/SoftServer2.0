@@ -67,7 +67,7 @@ class Application
                        'product_ingredients'  => 'product_id                INT (11)      NOT NULL,
                                                   ingredient_id             INT (11)      NOT NULL',
 
-                       'cart'                 => 'cart_session_id           VARCHAR (50)  NOT NULL PRIMARY KEY,
+                       'cart'                 => 'cart_session_id           INT(11)       AUTO_INCREMENT PRIMARY KEY,
                                                   cart_user_id              INT (11)      NOT NULL',
 
                        'cart_items'           => 'cart_session_id           VARCHAR (50)  NOT NULL PRIMARY KEY,

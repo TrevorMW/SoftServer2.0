@@ -2,12 +2,11 @@
 
 class User
 {
-  public  $user_id;
-  public  $user_name;
-  private $user_password;
+  public $user_id;
+  public $user_name;
+  public $user_pass;
 
   public $current_user = null;
-
 
   /**
    * __construct function.
@@ -20,7 +19,6 @@ class User
   {
     $this->load_user( $id );
   }
-
 
   /**
    * load_user function.
@@ -59,4 +57,22 @@ class User
     }
   }
 
+  /**
+   * load_current_user function.
+   *
+   * @access public
+   * @return void
+   */
+  public static function load_current_user()
+  {
+    $current_user = null;
+
+    if( $_SESSION['current_user'] )
+      $user = new User( $_SESSION['current_user'] );
+
+    if( $user instanceOf User )
+      $current_user = $user;
+
+    return $current_user;
+  }
 }

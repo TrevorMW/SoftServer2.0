@@ -165,6 +165,20 @@
             location.reload();
           }, 1000 )
         }
+      },
+      add_to_cart:function( resp, instance )
+      {
+        $(document).trigger( 'hide_loader' );
+
+        resp.status ? klass = 'success' : klass = 'error' ;
+        $.fn.form_msg.init( instance.form_msg );
+        $.fn.form_msg.remove_msg();
+        $.fn.form_msg.add_msg( resp.message, klass );
+
+        setTimeout(function()
+        {
+          $(document).trigger( 'toggle_flyout' );
+        }, 500 )
       }
     },
     flyout:{

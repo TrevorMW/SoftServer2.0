@@ -13,10 +13,11 @@ if( !empty( $data ) && is_array( $data ) )
 
   if( is_array( $options ) && !empty( $options ) )
   {
-    $data['type']      = 'select';
-    $data['name']      = 'ingredients['.$ingredient_type->ingredient_type_slug.']';
-    $data['val']       = $options;
-    $data['data_attr'] = '';
+    $data['type']        = 'select';
+    $data['name']        = 'ingredients['.$ingredient_type->ingredient_type_slug.']';
+    $data['val']         = $options;
+    $data['data_attr']   = '' ;
+    $data['placeholder'] = 'Select a Flavor' ;
 
     $resp->set_status( true );
     $resp->set_data( array( 'field' => Form_Helper::build_field( $data ) ) );

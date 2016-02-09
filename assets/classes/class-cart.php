@@ -41,10 +41,7 @@ class Cart
       if( isset( $this->cart_session_id ) )
         $this->load_cart_products( $ssdb, $this->cart_session_id );
     }
-
-
   }
-
 
   /**
    * load_cart_products function.
@@ -77,7 +74,6 @@ class Cart
     $this->cart_items = $products;
   }
 
-
   /**
    * get_cart_count function.
    *
@@ -88,7 +84,6 @@ class Cart
   {
     return count( $this->cart_items );
   }
-
 
   /**
    * create_new_cart_record function.
@@ -105,19 +100,67 @@ class Cart
     {
       global $ssdb;
 
-      $session_id = uniqid();
-      $user_id    = 4;
+      session_start();
 
-      $stmt = $ssdb->prepare(' INSERT INTO '.TABLE_PREFIX.'cart ( cart_session_id, cart_user_id ) VALUES ( :session_id, :user_id ) ' );
-      $stmt->bindParam( ':session_id', $session_id, PDO::PARAM_STR );
-      $stmt->bindParam( ':user_id', $user_id, PDO::PARAM_INT );
+      $user = new User( $_SESSION['current_user'] );
 
-      if( $stmt->execute() )
+      $stmt = $ssdb->prepare(' INSERT INTO '.TABLE_PREFIX.'cart ( cart_user_id ) VALUES ( :user_id ) ' );
+      $stmt->bindParam( ':user_id', $user->user_id, PDO::PARAM_INT );
+      $stmt->execute();
+      $row_id = $ssdb->lastInsertId();
+
+      if( $row_id != null )
       {
-        $result = $session_id;
+        $result = (int) $row_id;
       }
     }
 
     return $result;
+  }
+
+
+  /**
+   * create_cart_product_record function.
+   *
+   * @access public
+   * @param mixed $session_id
+   * @param mixed $product_id
+   * @return void
+   */
+  public function create_cart_product_record( $session_id, $product_id )
+  {
+    $result = null;
+
+    if( is_int( $session_id ) )
+    {
+      global $ssdb;
+
+      $stmt = $ssdb->prepare(' INSERT INTO '.TABLE_PREFIX.'cart_items ( cart_session_id, cart_product_id ) VALUES ( :session_id, :product_id ) ' );
+      $stmt->bindParam( ':session_id', $session_id, PDO::PARAM_INT );
+      $stmt->bindParam( ':product_id', $product_id, PDO::PARAM_INT );
+      $stmt->execute();
+      $row_id = $ssdb->lastInsertId();
+
+      if( $row_id != null )
+      {
+        $result = (int) $row_id;
+      }
+    }
+
+    return $result;
+  }
+
+
+  /**
+   * get_cart_contents function.
+   *
+   * @access public
+   * @return void
+   */
+  public function get_cart_contents()
+  {
+    global $user;
+
+    var_dump( $user );
   }
 }
