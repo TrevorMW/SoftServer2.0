@@ -5,6 +5,7 @@
       el:'',
       action:'',
       target:'',
+      form_msg:'',
       init:function( el )
       {
         if( el[0] != undefined )
@@ -12,32 +13,20 @@
           this.el           = el;
           this.action       = this.el.data('action');
           this.target       = this.el.data('target');
+          this.form_msg     = this.el.find('[data-form-msg]');
         }
       },
       init_listeners:function()
       {
-        $(document).on( 'register_ajax_forms', function( e )
+        $(document).on( 'register_form', function( e, data )
         {
-          $('[data-ajax-form]').each( function()
-          {
-            $.fn.ajax_form.init( $(this) )
-
-            var selects = $(this).find('[data-ajax-select]');
-
-            if( selects.length )
-            {
-              selects.each( function()
-              {
-                $.fn.ajax_select.init( $(this) )
-              })
-            }
-          })
+          $.fn.ajax_form.init( $(data) )
         })
 
         $(document).on( 'submit', this, function( e )
         {
           e.preventDefault();
-          e.data.make_request( e.data );
+          e.data.make_request( e.data )
         })
       },
       make_request: function( instance )
@@ -78,18 +67,54 @@
       }
     },
     ajax_get:{
-
-    },
-    ajax_select:{
       el:'',
+      action:'',
+      target:'',
+      data:'',
       init:function( el )
       {
-        this.el = el;
+        this.el     = el;
+        this.action = this.el.data('action');
+        this.target = this.el.data('target');
+        this.data   = this.el.data('extra-data');
 
-        this.el.on( 'change', function()
+        this.el.on( 'click', this, function( e )
         {
-          $(this).closest('[data-ajax-form]').trigger('submit')
+          e.preventDefault();
+          e.data.make_request( e.data );
         })
+      },
+      init_listeners:function()
+      {
+        $(document).on( 'register_form', function()
+        {
+          $('[data-ajax-get]').each( function()
+          {
+            $.fn.ajax_get.init( $(this) )
+          })
+        })
+      },
+      make_request:function( instance )
+      {
+        var form_data = {};
+
+        $(document).trigger( 'show_loader' );
+
+        form_data.type   = this.data,
+        form_data.action = this.action;
+
+        $.post( ajax_url + this.action + '.php' , form_data, function( response )
+        {
+          var new_data = $.parseJSON( response );
+
+          setTimeout( function( data, instance )
+          {
+            if( $.fn.callback_bank.hasOwnProperty( data.callback ) )
+              $.fn.callback_bank[new_data.callback]( data, instance );
+
+          }, 500, new_data, instance )
+
+        });
       }
     },
     callback_bank:{
@@ -97,10 +122,49 @@
       {
         var target = $('[data-updateable-content="' + instance.target + '"]');
 
-        resp.status ? target.html( resp.data.new_form ) : '' ;
+        target.hide();
 
-        $(document).trigger( 'register_ajax_forms' );
+        resp.status ? target.html( resp.data.new_form ) : target.html( resp.message ) ;
+
+        target.fadeIn();
+
+        $(document).trigger( 'register_form', target.find('form') );
         $(document).trigger( 'hide_loader' );
+      },
+      add_field:function( resp, instance )
+      {
+        resp.status ? instance.el.before( '<li>' + resp.data.field + '</li>' ) : '' ;
+
+        $(document).trigger( 'hide_loader' );
+      },
+      user_register:function( resp, instance )
+      {
+        $(document).trigger( 'hide_loader' );
+
+        $.fn.form_msg.init( instance.form_msg );
+        $.fn.form_msg.remove_msg();
+
+        resp.status ? klass = 'success' : klass = 'error' ;
+
+        $.fn.form_msg.add_msg( resp.message, klass );
+      },
+      user_login:function( resp, instance )
+      {
+        $(document).trigger( 'hide_loader' );
+
+        $.fn.form_msg.init( instance.form_msg );
+        $.fn.form_msg.remove_msg();
+
+        resp.status ? klass = 'success' : klass = 'error' ;
+        $.fn.form_msg.add_msg( resp.message, klass );
+
+        if( resp.status )
+        {
+          setTimeout(function()
+          {
+            location.reload();
+          }, 1000 )
+        }
       }
     },
     flyout:{
@@ -165,6 +229,60 @@
         }, 300, this )
       }
     },
+    form_msg:{
+      el:'',
+      init:function( el )
+      {
+        this.el = el;
+        this.el.html('');
+      },
+      add_msg:function( msg, status )
+      {
+        status ? klass = 'success' : klass = 'error' ;
+        this.el.html( msg ).addClass( 'active ' + klass );
+      },
+      remove_msg:function()
+      {
+        this.el.html('').removeClass();
+      }
+    },
+    tabs:{
+      tabs:'',
+      triggers:'',
+      init:function( tabs, triggers )
+      {
+        this.tabs     = tabs;
+        this.triggers = triggers;
+
+        this.triggers.on( 'click', 'a', this, function( e )
+        {
+          e.data.show_tab( $(this) )
+        })
+      },
+      show_tab:function( el )
+      {
+        this.hide_all();
+
+        el.addClass('active');
+
+        var id = el.data('tab-trigger');
+
+        this.tabs.find('[data-tab="' + id + '"]').addClass('active');
+      },
+      hide_all:function()
+      {
+        this.triggers.find('[data-tab-trigger]').each(function()
+        {
+          $(this).removeClass('active');
+        })
+
+        this.tabs.find('[data-tab]').each(function()
+        {
+          $(this).removeClass('active');
+        })
+
+      }
+    }
   })
 
 
@@ -173,14 +291,34 @@
     if( $('[data-loader]')[0] != undefined )
       $.fn.loader.init( $('[data-loader]') );
 
-    if( $('[data-flyout-trigger]')[0] != undefined )
+    if( $('[data-flyout-trigger]')[0] != undefined && $('[data-flyout]')[0] != undefined )
+    {
       $.fn.flyout.init( $('[data-flyout]'), $('[data-flyout-trigger]') );
+      $.fn.flyout.init_listeners();
+    }
 
-    $.fn.flyout.init_listeners();
+    if( $('[data-tabs]')[0] != undefined && $('[data-tab-triggers]')[0] != undefined )
+      $.fn.tabs.init( $('[data-tabs]'), $('[data-tab-triggers]') );
 
+    $.fn.ajax_get.init_listeners();
     $.fn.ajax_form.init_listeners();
-    $(document).trigger('register_ajax_forms' );
 
+    if( $('[data-ajax-form]')[0] != undefined )
+    {
+      $('[data-ajax-form] button[type="submit"]').click( function( e )
+      {
+        e.preventDefault();
+        var form = $(this).closest('[data-ajax-form]')
+        form.trigger( 'register_form', form ).trigger('submit');
+      })
+
+      $('[data-ajax-select]').change( function()
+      {
+        var form = $(this).closest('[data-ajax-form]')
+
+        form.trigger( 'register_form', form ).trigger( 'submit' );
+      })
+    }
   })
 
 })( jQuery, window )

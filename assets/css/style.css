@@ -3,6 +3,7 @@
   -webkit-box-sizing:border-box;
   -moz-box-sizing:border-box;
   outline:0 !important;
+  text-decoration:none;
 }
 
 ::selection {
@@ -23,6 +24,18 @@ body{
 
 pre{
   color:#444;
+}
+
+a,
+button,
+input[type="submit"]{
+  cursor:pointer
+}
+
+a,
+a:visited,
+a:link{
+  color:cornsilk;
 }
 
 .wrap,
@@ -92,6 +105,7 @@ pre{
   width:100%;
 }
 
+
 [data-loader]{
   height:0;
   display: none;
@@ -120,6 +134,7 @@ pre{
   opacity:.5;
 }
 
+
 [data-main-content]{
   display: none;
   max-width:800px;
@@ -131,6 +146,7 @@ pre{
 [data-main-content].fadein{
   opacity:1;
 }
+
 
 [data-flyout-trigger]{
   position: absolute;
@@ -151,6 +167,65 @@ pre{
   color:#7feaff;
 }
 
+
+.login-forms{
+  max-width:650px;
+  margin: 0 auto;
+}
+
+
+[data-tabs]{
+  border:2px solid cornsilk;
+  border-top:0;
+  padding:25px;
+  background-color:rgba(255,255,255,0.3);
+  position: relative;
+}
+[data-tab]{
+  overflow:hidden;
+  height:0;
+}
+[data-tab].active{
+  height:auto;
+  min-height:250px;
+}
+
+
+[data-tab-triggers]{
+  display: block;
+  width:100%;
+}
+[data-tab-triggers] ul{
+  display: table;
+  width:100%;
+  table-layout:fixed;
+  border:2px solid cornsilk;
+  margin:0;
+}
+[data-tab-triggers] li{
+  display: table-cell;
+  vertical-align: bottom;
+  text-align: center;
+  border-left:2px solid cornsilk;
+}
+[data-tab-triggers] li:first-child{
+  border:0;
+}
+[data-tab-triggers] a{
+  display: block;
+  width:100%;
+  padding: 15px 0;
+  font-size:18px;
+  color:#777;
+  background-color:rgba(255,255,255,0.3);
+}
+[data-tab-triggers] a:hover,
+[data-tab-triggers] a.active{
+  color:salmon;
+  background-color:cornsilk;
+}
+
+
 header h1 {
   font-family: 'Pacifico', cursive;
 	font-size:86px;
@@ -160,30 +235,19 @@ header h1 {
 }
 
 select,
-input[type="text"]{
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
 	display:block;
 	width:100%;
 	border:3px solid #fff;
-	height:40px;
 	font-size:18px;
 	color:#fff;
-	max-width:400px;
-	margin: 0 auto;
+	padding:8px 12px;
 	background-color:transparent;
 }
-select[multiple]{
-	min-height:150px;
-	background-color:transparent;
-	color:#fff;
-}
-select[multiple] option{
-	padding:4px;
-}
-select[multiple] option::selected{
-	background-color:transparent;
-}
-select[multiple] option[disabled]{
-	color:#60e5b4;
+select{
+  height:50px;
+  text-indent:10px;
+
 }
 form input[type="submit"]{
 	background: #ff708f; /* Old browsers */
@@ -204,4 +268,33 @@ form input[type="submit"]{
 }
 form input[type="submit"]:hover{
 	background: #ff708f; /* Old browsers */
+}
+form ul{
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+form li{
+  padding-bottom:12px;
+  text-align: left;
+}
+form li.submit{
+  text-align: right;
+}
+form li label{
+  display: block;
+  width:100%;
+  text-align: left;
+  padding:12px 0;
+}
+
+.btn{
+  padding:12px 30px;
+  font-size:18px;
+  background-color:salmon;
+  color:#fff;
+  border:0;
+
+  border-radius:3px;
+
 }

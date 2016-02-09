@@ -1,6 +1,6 @@
 <?php
 
-class AjaxResponse
+class Ajax_Response
 {
   public $status;
   public $message;

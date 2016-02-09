@@ -1,8 +1,8 @@
 <?php
 
-class TemplateHelper
+class Template_Helper
 {
-  public function get_template( $path = null, $name = null, array $params = null )
+  public static function get_template( $path = null, $name = null, $params = null )
   {
     $html = '';
 
@@ -15,14 +15,13 @@ class TemplateHelper
     include( $template );
   }
 
-  public static function render_template( $path = null, $name = null, array $params = null )
+  public static function render_template( $path = null, $name = null, $params = null )
   {
     $html = '';
 
     ob_start();
 
-    $template = new TemplateHelper();
-    $template->get_template( $path, $name, $params );
+    Template_Helper::get_template( $path, $name, $params );
 
     $html .= ob_get_contents();
 

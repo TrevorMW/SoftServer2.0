@@ -1,6 +1,6 @@
 <?php
 
-class FormHelper
+class Form_Helper
 {
   /**
    * build_select_options function.
@@ -28,22 +28,7 @@ class FormHelper
     return $option_html;
   }
 
-  public static function parse_fields( array $fields = null )
-  {
-    $field_html = '';
-
-    if( is_array( $fields ) && !empty( $fields ) )
-    {
-      foreach( $fields as $k => $field )
-      {
-        $field_html .= FormHelper::build_field( $field );
-      }
-    }
-
-    return $field_html;
-  }
-
-  public static function build_field( $field_data )
+  public static function build_field( array $field_data )
   {
     $html = '';
 
@@ -53,13 +38,20 @@ class FormHelper
       {
         case 'select' :
 
-          $html = '<select name="'.$field_data['name'].'" '.$field_data['data'].'>'.$field_data['options'].'</select>';
+          $html = '<select name="'.$field_data['name'].'" '.$field_data['data_attr'].'>'.self::build_select_options( $field_data['val'] ).'</select>';
 
         break;
 
         case 'hidden' :
 
-          $html = '<input type="hidden" name="'.$field_data['name'].'" '.$field_data['data'].' value="'.$field_data['value'].'" />';
+          $html = '<input type="hidden" name="'.$field_data['name'].'" '.$field_data['data_attr'].' value="'.$field_data['val'].'" />';
+
+        break;
+
+
+        case 'text' :
+
+          $html = '<input type="text" name="'.$field_data['name'].'" '.$field_data['data_attr'].' value="'.$field_data['val'].'" />';
 
         break;
 
