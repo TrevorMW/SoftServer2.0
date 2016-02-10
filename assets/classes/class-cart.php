@@ -219,4 +219,30 @@ class Cart
 
     return Template_Helper::render_template( __TEMPLATE_PATH__, 'checkout', $data );
   }
+
+  /**
+   * destroy_cart function.
+   *
+   * @access public
+   * @return void
+   */
+  public function destroy_cart( $user )
+  {
+    $result = false;
+
+    if( $user instanceOf User )
+    {
+      global $ssdb;
+
+      $stmt = $ssdb->prepare( 'DELETE FROM '._TABLE_PREFIX.'cart WHERE cart_user_id = ? ' );
+      $stmt->bindParam( 1, $user->user_id, PDO::PARAM_INT );
+
+      if( $stmt->execute() )
+      {
+        $result = true;
+      }
+    }
+
+    return $result;
+  }
 }

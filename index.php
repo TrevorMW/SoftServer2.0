@@ -1,4 +1,4 @@
-<?php error_reporting(0); ini_set( 'display_errors', 'Off' ); session_start();
+<?php  session_start();
 
 /** SoftServer
  *  version 0.0.1

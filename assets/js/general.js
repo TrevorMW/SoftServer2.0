@@ -33,68 +33,37 @@
       {
         $(document).trigger( 'show_loader' );
 
-        var flag = this.validate_fields();
+        var formData = this.el.serializeArray(),
+            data     = {}
 
-        if( flag )
+        $.each( formData, function()
         {
-          var formData = this.el.serializeArray(),
-              data     = {}
-
-          $.each( formData, function()
+          if( data[this.name] !== undefined )
           {
-            if( data[this.name] !== undefined )
-            {
-              if( !data[this.name].push )
-                data[this.name] = [ data[this.name] ];
+            if( !data[this.name].push )
+              data[this.name] = [ data[this.name] ];
 
-              data[this.name].push( this.value || '' );
-            }
-            else
-              data[this.name] = this.value || '';
-          });
-
-          data.action = this.action;
-
-          $.post( ajax_url + this.action + '.php' , data, function( response )
-          {
-            var new_data = $.parseJSON( response );
-
-            setTimeout( function( data, instance )
-            {
-              if( $.fn.callback_bank.hasOwnProperty( data.callback ) )
-                $.fn.callback_bank[new_data.callback]( data, instance );
-
-            }, 500, new_data, instance )
-
-            typeof after_request == 'function' ? after_request( data, new_data, instance ) : '' ;
-          });
-        }
-        else
-        {
-          $(document).trigger( 'hide_loader' );
-        }
-      },
-      validate_fields:function()
-      {
-        $.fn.form_msg.init( this.form_msg );
-        $.fn.form_msg.remove_msg();
-
-        var have_val = true;
-
-        this.el.find('input, select').each(function()
-        {
-          var val = $(this).val();
-
-          if( val == '' || val  == undefined )
-          {
-            have_val = false;
-
-
-            $.fn.form_msg.add_msg( 'Please fill out all fields', 'error' );
+            data[this.name].push( this.value || '' );
           }
-        })
+          else
+            data[this.name] = this.value || '';
+        });
 
-        return have_val;
+        data.action = this.action;
+
+        $.post( ajax_url + this.action + '.php' , data, function( response )
+        {
+          var new_data = $.parseJSON( response );
+
+          setTimeout( function( data, instance )
+          {
+            if( $.fn.callback_bank.hasOwnProperty( data.callback ) )
+              $.fn.callback_bank[new_data.callback]( data, instance );
+
+          }, 500, new_data, instance )
+
+          typeof after_request == 'function' ? after_request( data, new_data, instance ) : '' ;
+        });
       }
     },
     ajax_get:{
@@ -230,6 +199,15 @@
         {
           $.fn.form_msg.add_msg( resp.message, 'error' )
         }
+      },
+      submit_order:function( resp, instance )
+      {
+        $.fn.form_msg.init( instance.form_msg );
+        $.fn.form_msg.remove_msg();
+
+        var checkout_forms = $('[data-checkout-forms]');
+
+        resp.status ? checkout_forms.html( resp.message ) : $.fn.form_msg.add_msg( resp.message, 'error' ) ;
       }
     },
     flyout:{

@@ -262,6 +262,9 @@ a:link{
   font-size:27px;
 }
 
+[data-checkout-forms]{
+  text-align: center;
+}
 
 
 [data-form-msg]{

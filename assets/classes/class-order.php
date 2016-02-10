@@ -99,4 +99,65 @@ class Order
 
     return $products;
   }
+
+  /**
+   * create_order_record function.
+   *
+   * @access public
+   * @return void
+   */
+  public function create_order_record( $user, $order_total )
+  {
+    $order_id = null;
+
+    if( $user instanceOf User )
+    {
+      global $ssdb;
+
+      $order_status = '1';
+
+      $stmt = $ssdb->prepare( 'INSERT INTO '.TABLE_PREFIX.'orders ( order_user_id, order_status, order_total ) VALUES ( :order_user, :order_status, :order_total )' );
+      $stmt->bindParam( ':order_user',   $user->user_id, PDO::PARAM_INT  );
+      $stmt->bindParam( ':order_status', $order_status,  PDO::PARAM_BOOL );
+      $stmt->bindParam( ':order_total',  $order_total,   PDO::PARAM_STR  );
+      $stmt->execute();
+
+      $result = $ssdb->lastInsertId();
+
+      if( $result != null )
+        $order_id = (int) $result;
+    }
+
+    return $order_id;
+  }
+
+  public function create_order_product_records( $order_id, $products )
+  {
+    $result = true;
+
+    if( is_int( $order_id ) )
+    {
+      global $ssdb;
+
+      if( is_array( $products ) && !empty( $products ) )
+      {
+        foreach( $products as $product )
+        {
+          $product_id = (int) $product;
+
+          $stmt = $ssdb->prepare( 'INSERT INTO '.TABLE_PREFIX.'order_items ( order_id, product_id ) VALUES ( :order_id, :product_id )' );
+          $stmt->bindParam( ':order_id',   $order_id,    PDO::PARAM_INT  );
+          $stmt->bindParam( ':product_id', $product_id,  PDO::PARAM_INT );
+          $results = $stmt->execute();
+
+          if( !$results )
+            $result = false;
+
+          $stmt = '';
+        }
+      }
+    }
+
+    return $result;
+  }
 }

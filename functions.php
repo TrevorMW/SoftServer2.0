@@ -1,4 +1,8 @@
-<?php require_once( 'config.php' ); error_reporting(0); ini_set( 'display_errors', 'Off' ); session_start();
+<?php require_once( 'config.php' );
+
+error_reporting(0);
+ini_set( 'display_errors', 'Off' );
+session_start();
 
 $app = new Application();
 $app->start_up_ice_cream_machine();
