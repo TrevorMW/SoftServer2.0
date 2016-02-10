@@ -28,4 +28,17 @@ class Text_Helper
 
     return $title;
   }
+
+  /**
+   * format_string_as_price function.
+   *
+   * @access public
+   * @static
+   * @param mixed $string
+   * @return void
+   */
+  public static function format_string_as_price( $string )
+  {
+    return '$'.number_format( $string, 2 );
+  }
 }

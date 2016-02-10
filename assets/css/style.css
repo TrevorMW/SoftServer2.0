@@ -78,7 +78,18 @@ a:link{
 .wrap.cart.active{
   width:350px;
   height:100vh;
-  padding:25px;
+  color:#444;
+}
+
+.wrap.cart a{
+  color:#444;
+}
+
+.wrapper.cart-header{
+  text-align: right;
+  font-size:24px;
+  padding:15px;
+  border-bottom:2px solid #efefef;
 }
 
 .container{
@@ -156,15 +167,10 @@ a:link{
   font-size:27px;
   color: #fff;
   padding:20px;
-  -webkit-transition: background-color color .3s;
-	-moz-transition:    background-color color .3s;
-	-ms-transition:     background-color color .3s;
-	-o-transition:      background-color color .3s;
 }
 [data-flyout-trigger]:hover,
 [data-flyout-trigger].active{
-  background-color:#fff;
-  color:#7feaff;
+  color:#ff708f;
 }
 
 
@@ -226,6 +232,36 @@ a:link{
 }
 
 
+[data-form-msg]{
+  margin:10px auto;
+}
+
+.cart-body > ul{
+  list-style: none;
+  padding:0;
+  margin:0;
+}
+
+li.cart-item{
+  list-style: none;
+}
+.cart-item{
+  border-bottom:2px solid #efefef;
+  padding:15px;
+}
+
+.cart-submit{
+  padding:15px;
+  text-align: center;
+}
+
+
+
+.btn{
+  color:#fff;
+}
+
+
 header h1 {
   font-family: 'Pacifico', cursive;
 	font-size:86px;
@@ -234,8 +270,28 @@ header h1 {
 	text-shadow: 5px 5px 0 #fff, 10px 10px 0 #f5e778;
 }
 
+.cart-body h2{
+  margin-top:0;
+}
+
+.cart-header h3{
+  font-size:18px;
+  color:#444;
+  float:left;
+  margin:5px 0 0 0;
+}
+
+.cart-body span{
+  float:right;
+  margin-top:4px;
+  color:#ff708f;
+  font-size:22px;
+}
+
 select,
-input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
+input:not( [type="checkbox"] ),
+input:not( [type="radio"] ),
+input:not( [type="hidden"] ){
 	display:block;
 	width:100%;
 	border:3px solid #fff;
@@ -243,6 +299,10 @@ input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]){
 	color:#fff;
 	padding:8px 12px;
 	background-color:transparent;
+}
+
+input:focus{
+  border-color:#ff708f;
 }
 select{
   height:50px;
@@ -288,13 +348,16 @@ form li label{
   padding:12px 0;
 }
 
-.btn{
+.btn.btn-primary,
+a.btn.btn-primary{
+  display: inline-block;
   padding:12px 30px;
   font-size:18px;
   background-color:salmon;
   color:#fff;
   border:0;
-
   border-radius:3px;
-
+}
+.btn.btn-primary:hover{
+  background-color:#db5849;
 }

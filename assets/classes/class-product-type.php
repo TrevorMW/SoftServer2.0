@@ -8,8 +8,6 @@ class Product_Type
   public $product_type_base_price;
 
   public $types;
-  public $fields;
-  public $allowed_ingredient_types;
 
   /**
    * __construct function.
@@ -22,7 +20,6 @@ class Product_Type
   {
     $this->load_product_type( $identifier );
     $this->load_all_types();
-    $this->load_allowed_ingredient_types();
   }
 
   /**
@@ -91,50 +88,6 @@ class Product_Type
   }
 
   /**
-   * load_allowed_ingredient_types function.
-   *
-   * @access public
-   * @return void
-   */
-  public function load_allowed_ingredient_types()
-  {
-    $allowed = '';
-
-    if( $this->product_type_slug != null )
-    {
-      switch( $this->product_type_slug )
-      {
-        case 'cone' :
-
-          $allowed = array( 'ice_cream' => '3',
-                            'container' => '1' );
-
-        break;
-
-        case 'milkshake' :
-
-          $allowed = array( 'ice_cream' => '3',
-                            'container' => array( 'default' => 'glass' )
-                          );
-
-        break;
-
-        case 'float' :
-
-          $allowed = array( 'ice_cream' => '3',
-                            'container' => array( 'default' => 'glass' )
-                          );
-
-        break;
-
-      }
-    }
-
-    $this->allowed_ingredient_types = $allowed;
-  }
-
-
-  /**
    * get_product_form_fields function.
    *
    * @access public
@@ -155,71 +108,73 @@ class Product_Type
       {
         case 'cone' :
 
-        /*
-          $fields = array(
-                        array( 'type'    => 'select',
-                               'name'    => 'ingredients[container]',
-                               'options' =>  FormHelper::build_select_options( $ingredient->filter_ingredients_by_type( 'container' ) ) ),
+          $ingredients = $ingredient->get_ingredients_by_type( 4 );
 
-                        array( 'type'     => 'select',
-                               'name'     => 'ingredients[ice_cream][]',
-                               'options'  => FormHelper::build_select_options( $ingredient->filter_ingredients_by_type( 'ice cream' ) ) )
-                      );
-        */
+          unset( $ingredients[18] );
 
           $fields .= '<input type="hidden" name="product_type" value="'.$product_type->product_type_id.'" />
                       <li>
                         <select name="ingredients[container]">
-                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 4 ), 'Select a Container'  ).'
+                        '.Form_Helper::build_select_options( $ingredients , 'Select a Cone Type'  ).'
                         </select>
                       </li>
                       <li>
+                        <label>Scoop #1</label>
                         <select name="ingredients[ice_cream][]">
-                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ), 'Select a Flavor' ).'
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ), 'Select 1st Ice Cream Flavor' ).'
                         </select>
                       </li>
-                      <li class="submit"><a href="#" data-ajax-get data-action="add_field" data-extra-data="ice_cream">Add Another Flavor!</a></li>';
+                      <li>
+                        <label>Scoop #2</label>
+                        <select name="ingredients[ice_cream][]">
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ), 'Select 2nd Ice Cream Flavor' ).'
+                        </select>
+                      </li>';
+
+                    //<li class="submit"><a href="#" data-ajax-get data-action="add_field" data-extra-data="ice_cream">Add Another Flavor!</a></li>
 
 
         break;
 
-        /*
         case 'milkshake' :
 
-          $fields = array(
-                        array( 'type'   => 'hidden',
-                               'name'   => 'ingredients[container]',
-                               'value'  => '9' ),
-
-                        array( 'type'   => 'select',
-                               'name'   => 'ingredients[milk]',
-                               'values' => Form_Helper::build_select_options( $ingredient->filter_ingredients_by_type( 'milk' ) ) ),
-
-                        array( 'type'   => 'select',
-                               'name'   => 'ingredients[ice_cream][]',
-                               'values' => Form_Helper::build_select_options( $ingredient->filter_ingredients_by_type( 'ice cream' ) ) )
-                      );
+          $fields .= '<input type="hidden" name="product_type" value="'.$product_type->product_type_id.'" />
+                      <li>
+                        <input type="hidden" name="ingredients[container]" value="18" />
+                      </li>
+                      <li>
+                        <select name="ingredients[ice_cream]">
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ), 'Select an Ice Cream Flavor' ).'
+                        </select>
+                      </li>
+                      <li>
+                        <select name="ingredients[milk][]">
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 3 ), 'Select Milk Type' ).'
+                        </select>
+                      </li>';
         break;
 
 
         case 'float' :
 
-          $fields = array(
-                        array( 'type'   => 'hidden',
-                               'name'   => 'ingredients[container]',
-                               'values' => '9' ),
-
-                        array( 'type'   => 'select',
-                               'name'   => 'ingredients[soda]',
-                               'values' => Form_Helper::build_select_options( $ingredient->filter_ingredients_by_type( 'soda' ) ) ),
-
-                        array( 'type'   => 'select',
-                               'name'   => 'ingredients[ice_cream][]',
-                               'values' => Form_Helper::build_select_options( $ingredient->filter_ingredients_by_type( 'ice cream' ) ) )
-                      );
+          $fields .= '<input type="hidden" name="product_type" value="'.$product_type->product_type_id.'" />
+                      <li>
+                        <input type="hidden" name="ingredients[container]" value="18" />
+                      </li>
+                      <li>
+                        <select name="ingredients[soda][]">
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 2 ), 'Select a Soda' ).'
+                        </select>
+                      </li>
+                      <li>
+                        <label>Scoop #1</label>
+                        <select name="ingredients[ice_cream][]">
+                        '.Form_Helper::build_select_options( $ingredient->get_ingredients_by_type( 1 ), 'Select an Ice Cream Flavor' ).'
+                        </select>
+                      </li>
+                      <li class="submit"><a href="#" data-ajax-get data-action="add_field" data-extra-data="ice_cream">Add Another Flavor!</a></li>';
         break;
 
-        */
       }
     }
 

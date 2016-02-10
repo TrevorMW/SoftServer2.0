@@ -1,6 +1,6 @@
 <?php
 
-class Product extends Product_Type
+class Product
 {
   public $product_id;
   public $product_base_price;
@@ -17,7 +17,6 @@ class Product extends Product_Type
   {
     $this->load_product( $identifier );
   }
-
 
   /**
    * load_product function.
@@ -63,7 +62,6 @@ class Product extends Product_Type
     }
   }
 
-
   /**
    * create_product_record function.
    *
@@ -92,7 +90,6 @@ class Product extends Product_Type
 
     return $result;
   }
-
 
   /**
    * create_product_ingredient_records function.
@@ -139,16 +136,30 @@ class Product extends Product_Type
     }
   }
 
-
   /**
-   * create_cart_product_record function.
+   * get_product_total_price function.
    *
    * @access public
-   * @param mixed $id (default: null)
    * @return void
    */
-  public function create_cart_product_record( $id = null )
+  public function get_product_total_price( $product, $ingredients  )
   {
+    $total   = '';
+    $add_ons = array();
 
+    if( $product instanceOf Product )
+    {
+      $total = (float) $product->product_base_price;
+
+      foreach( $ingredients as $ingredient )
+      {
+        $add_ons[] = (float) $ingredient->ingredient_price;
+      }
+
+      $total = $total + array_sum( $add_ons );
+    }
+
+    return Text_Helper::format_string_as_price( $total );
   }
+
 }

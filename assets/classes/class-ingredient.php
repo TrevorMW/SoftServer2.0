@@ -21,7 +21,6 @@ class Ingredient
     $this->load_ingredient( $identifier );
   }
 
-
   /**
    * load_ingredient function.
    *
@@ -68,7 +67,6 @@ class Ingredient
     }
   }
 
-
   /**
    * get_ingredients_by_type function.
    *
@@ -96,7 +94,6 @@ class Ingredient
     return $filtered_options;
   }
 
-
   /**
    * build_ingredient_array function.
    *
@@ -113,6 +110,38 @@ class Ingredient
       foreach( $data as $k => $val )
       {
         $ingredients[ $val->ingredient_id ] = $val->ingredient_name;
+      }
+    }
+
+    return $ingredients;
+  }
+
+  /**
+   * load_product_ingredients function.
+   *
+   * @access public
+   * @return void
+   */
+  public function load_product_ingredients( $product_id = null )
+  {
+    $ingredients = array();
+
+    if( is_int( $product_id ) )
+    {
+      global $ssdb;
+
+      $stmt = $ssdb->prepare( 'SELECT * FROM '.TABLE_PREFIX.'product_ingredients WHERE 1=1 AND product_id = ? ' );
+      $stmt->bindParam( 1, $product_id, PDO::PARAM_INT );
+      $stmt->execute();
+
+      $result = $stmt->fetchAll();
+
+      if( is_array( $result ) && !empty( $result ) )
+      {
+        foreach( $result as $ingredient )
+        {
+          $ingredients[] = new Ingredient( $ingredient['ingredient_id'] );
+        }
       }
     }
 

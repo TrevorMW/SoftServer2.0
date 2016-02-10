@@ -1,4 +1,4 @@
-<?php error_reporting(-1); session_start();
+<?php error_reporting(0); ini_set( 'display_errors', 'Off' ); session_start();
 
 /** SoftServer
  *  version 0.0.1
@@ -9,9 +9,7 @@ require_once( 'functions.php' );
 
 global $product_type, $cart;
 
-$user = new User( $_SESSION['current_user'] );
-
-$cart_items   = $cart->get_cart_count();
+$user         = new User( $_SESSION['current_user'] );
 $current_user = User::load_current_user() ?>
 
 <!DOCTYPE html>
@@ -25,6 +23,12 @@ $current_user = User::load_current_user() ?>
     <link href='http://fonts.googleapis.com/css?family=Pacifico|Frijole|Lato:400,300,700,900' rel='stylesheet' type='text/css'>
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet" media="screen" />
+
+    <script>
+      var ajax_url = '/assets/scripts/';
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="assets/js/general.js" type="text/javascript"></script>
   </head>
 
   <body>
@@ -32,7 +36,7 @@ $current_user = User::load_current_user() ?>
     <?php if( $current_user instanceOf User ) { ?>
 
       <div class="wrap main-body">
-        <a href="#" data-flyout-trigger data-async-content="load_cart_count"><i class="fa fa-fw fa-shopping-cart"></i>( <?php echo $cart_items ?> )</a>
+        <a href="#" data-flyout-trigger data-async-content="load_cart_count"><i class="fa fa-fw fa-shopping-cart"></i><?php $cart->cart_item_count_string(); ?></a>
         <div class="table" data-loader><div class="table-cell"><i class="fa fa-spin fa-cog"></i></div></div>
         <div class="wrapper table">
           <div class="table-cell">
@@ -47,9 +51,15 @@ $current_user = User::load_current_user() ?>
           </div>
         </div>
       </div>
-      <div class="wrap cart" data-flyout data-async-content="load_cart_data" data-load-when="deferred" data-target="cart-contents">
-        <a href="#" data-destroy-flyout><i class="fa fa-fw fa-times"></i></a>
-        <div data-updateable-content="cart-contents"></div>
+      <div class="wrap cart" data-flyout >
+        <div class="wrapper cart-header">
+          <h3>Your Cart</h3>
+          <a href="#" data-destroy-flyout><i class="fa fa-fw fa-times"></i></a>
+        </div>
+        <div class="wrapper cart-body" data-async-content="load_cart_data" data-load-when="deferred" data-target="cart-contents">
+          <?php echo $cart->get_cart_contents(); ?>
+          <?php echo $cart->checkout_button(); ?>
+        </div>
       </div>
 
     <?php } else { ?>
@@ -82,10 +92,19 @@ $current_user = User::load_current_user() ?>
 
     <?php } ?>
 
-    <script>
-      var ajax_url = '/assets/scripts/';
-    </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="assets/js/general.js" type="text/javascript"></script>
+    <div class="table popup-parent" data-popup="checkout">
+      <div class="table-cell popup-background">
+        <div class="popup">
+          <header>
+            <h1>Checkout</h1>
+            <a href="#" data-destroy-popup><i class="fa fa-fw fa-times"></i></a>
+          </header>
+          <section>
+            <?php echo $cart->get_checkout();?>
+          </section>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>

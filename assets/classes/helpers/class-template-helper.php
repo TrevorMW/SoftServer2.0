@@ -21,9 +21,9 @@ class Template_Helper
 
     ob_start();
 
-    Template_Helper::get_template( $path, $name, $params );
+      Template_Helper::get_template( $path, $name, $params );
 
-    $html .= ob_get_contents();
+      $html .= ob_get_contents();
 
     ob_get_clean();
 

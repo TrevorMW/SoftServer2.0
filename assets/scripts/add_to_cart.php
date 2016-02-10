@@ -1,14 +1,14 @@
-<?php require_once( '../../functions.php' );
+<?php require_once( '../../functions.php' ); error_reporting(0); ini_set( 'display_errors', 'Off' ); session_start();
 
 $data = $_POST;
 $resp = new Ajax_Response( $data['action'], true );
 
 if( is_array( $data ) && !empty( $data ) )
 {
-  $cart    = new Cart();
-  $cart_id = $cart->create_new_cart_record( $data );
+  $user = new User( $_SESSION['current_user'] );
+  $cart = new Cart();
 
-  if( is_int( $cart_id ) )
+  if( is_int( $user->user_id ) )
   {
     $product_type   = new Product_Type( (int) $data['product_type'] );
     $product        = new Product();
@@ -16,13 +16,10 @@ if( is_array( $data ) && !empty( $data ) )
 
     if( is_int( $new_product_id ) )
     {
-      // ADD REFERNCE TO NEW PRODUCT IN CART
-      $product->create_cart_product_record( $new_product_id );
-
       // CREATE CONNECTIONS BETWEEN INGREDIENTS AND PRODUCT
       $product->create_product_ingredient_records( $new_product_id, $data['ingredients'] );
 
-      $result = $cart->create_cart_product_record( $cart_id, $new_product_id );
+      $result = $cart->create_cart_product_record( $user->user_id, $new_product_id );
 
       if( is_int( $result ) )
       {

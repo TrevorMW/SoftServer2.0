@@ -1,4 +1,4 @@
-<?php
+<?php session_start();
 
 class Application
 {
@@ -13,8 +13,9 @@ class Application
   {
     $db                      = new DB();
     $GLOBALS['ssdb']         = $db->instance;
+    $current_user            = new User( $_SESSION['current_user'] );
 
-    $GLOBALS['cart']         = new Cart();
+    $GLOBALS['cart']         = new Cart( $current_user->user_id );
     $GLOBALS['product_type'] = new Product_Type();
 
     self::build_application_tables( $db->instance );
@@ -67,11 +68,8 @@ class Application
                        'product_ingredients'  => 'product_id                INT (11)      NOT NULL,
                                                   ingredient_id             INT (11)      NOT NULL',
 
-                       'cart'                 => 'cart_session_id           INT(11)       AUTO_INCREMENT PRIMARY KEY,
-                                                  cart_user_id              INT (11)      NOT NULL',
-
-                       'cart_items'           => 'cart_session_id           VARCHAR (50)  NOT NULL PRIMARY KEY,
-                                                  product_id                INT (11)      NOT NULL',
+                       'cart'                 => 'cart_user_id              INT (11)      NOT NULL,
+                                                  cart_product_id           INT (11)      NOT NULL',
                      );
 
       foreach( $tables as $table_name => $fields )

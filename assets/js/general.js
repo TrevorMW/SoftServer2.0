@@ -33,37 +33,68 @@
       {
         $(document).trigger( 'show_loader' );
 
-        var formData = this.el.serializeArray(),
-            data     = {}
+        var flag = this.validate_fields();
 
-        $.each( formData, function()
+        if( flag )
         {
-          if( data[this.name] !== undefined )
-          {
-            if( !data[this.name].push )
-              data[this.name] = [ data[this.name] ];
+          var formData = this.el.serializeArray(),
+              data     = {}
 
-            data[this.name].push( this.value || '' );
+          $.each( formData, function()
+          {
+            if( data[this.name] !== undefined )
+            {
+              if( !data[this.name].push )
+                data[this.name] = [ data[this.name] ];
+
+              data[this.name].push( this.value || '' );
+            }
+            else
+              data[this.name] = this.value || '';
+          });
+
+          data.action = this.action;
+
+          $.post( ajax_url + this.action + '.php' , data, function( response )
+          {
+            var new_data = $.parseJSON( response );
+
+            setTimeout( function( data, instance )
+            {
+              if( $.fn.callback_bank.hasOwnProperty( data.callback ) )
+                $.fn.callback_bank[new_data.callback]( data, instance );
+
+            }, 500, new_data, instance )
+
+            typeof after_request == 'function' ? after_request( data, new_data, instance ) : '' ;
+          });
+        }
+        else
+        {
+          $(document).trigger( 'hide_loader' );
+        }
+      },
+      validate_fields:function()
+      {
+        $.fn.form_msg.init( this.form_msg );
+        $.fn.form_msg.remove_msg();
+
+        var have_val = true;
+
+        this.el.find('input, select').each(function()
+        {
+          var val = $(this).val();
+
+          if( val == '' || val  == undefined )
+          {
+            have_val = false;
+
+
+            $.fn.form_msg.add_msg( 'Please fill out all fields', 'error' );
           }
-          else
-            data[this.name] = this.value || '';
-        });
+        })
 
-        data.action = this.action;
-
-        $.post( ajax_url + this.action + '.php' , data, function( response )
-        {
-          var new_data = $.parseJSON( response );
-
-          setTimeout( function( data, instance )
-          {
-            if( $.fn.callback_bank.hasOwnProperty( data.callback ) )
-              $.fn.callback_bank[new_data.callback]( data, instance );
-
-          }, 500, new_data, instance )
-
-          typeof after_request == 'function' ? after_request( data, new_data, instance ) : '' ;
-        });
+        return have_val;
       }
     },
     ajax_get:{
@@ -177,8 +208,8 @@
 
         setTimeout(function()
         {
-          $(document).trigger( 'toggle_flyout' );
-        }, 500 )
+          location.reload();
+        }, 1000 )
       }
     },
     flyout:{
@@ -217,6 +248,8 @@
 
         instance.trigger.toggleClass('active');
         instance.el.toggleClass('active');
+
+        $(document).trigger( 'load_async_content' );
       }
     },
     loader:{
@@ -296,6 +329,56 @@
         })
 
       }
+    },
+    async_content:{
+      el:'',
+      init:function( el )
+      {
+        this.el = el;
+      },
+      init_listeners:function()
+      {
+        $(document).on( 'load_async_content', this, function( e, data )
+        {
+
+        })
+      },
+      load_content:function()
+      {
+
+      }
+    },
+    popup:{
+      el:'',
+      trigger:'',
+      init:function( trigger )
+      {
+        this.trigger = trigger
+        this.el      = $('[data-popup="'+ this.trigger.data('trigger-popup') + '"]');
+        this.destroy = this.el.find('[data-destroy-popup]');
+
+        this.trigger.click( this, function( e )
+        {
+          e.preventDefault();
+          e.data.show_popup();
+        })
+
+        this.destroy.click( this, function( e )
+        {
+          e.preventDefault();
+          e.data.hide_popup();
+        })
+      },
+      show_popup:function()
+      {
+        $('body').addClass('lock');
+        this.el.addClass('active');
+      },
+      hide_popup:function()
+      {
+        $('body').removeClass('lock');
+        this.el.removeClass('active');
+      }
     }
   })
 
@@ -305,14 +388,17 @@
     if( $('[data-loader]')[0] != undefined )
       $.fn.loader.init( $('[data-loader]') );
 
-    if( $('[data-flyout-trigger]')[0] != undefined && $('[data-flyout]')[0] != undefined )
-    {
-      $.fn.flyout.init( $('[data-flyout]'), $('[data-flyout-trigger]') );
-      $.fn.flyout.init_listeners();
-    }
-
     if( $('[data-tabs]')[0] != undefined && $('[data-tab-triggers]')[0] != undefined )
       $.fn.tabs.init( $('[data-tabs]'), $('[data-tab-triggers]') );
+
+    if( $('[data-popup]')[0] != undefined && $('[data-trigger-popup]')[0] != undefined )
+      $.fn.popup.init( $('[data-trigger-popup]') );
+
+    if( $('[data-flyout-trigger]')[0] != undefined && $('[data-flyout]')[0] != undefined )
+      $.fn.flyout.init( $('[data-flyout]'), $('[data-flyout-trigger]') );
+      $.fn.flyout.init_listeners();
+
+
 
     $.fn.ajax_get.init_listeners();
     $.fn.ajax_form.init_listeners();
