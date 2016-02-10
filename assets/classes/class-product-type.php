@@ -140,6 +140,7 @@ class Product_Type
 
           $fields .= '<input type="hidden" name="product_type" value="'.$product_type->product_type_id.'" />
                       <li>
+                        <h4>Use Promo Code DOLLAROFF for a discount!</h4>
                         <input type="hidden" name="ingredients[container]" value="18" />
                       </li>
                       <li>
@@ -159,6 +160,7 @@ class Product_Type
 
           $fields .= '<input type="hidden" name="product_type" value="'.$product_type->product_type_id.'" />
                       <li>
+                        <h4>Use Promo Code DOLLAROFF for a discount!</h4>
                         <input type="hidden" name="ingredients[container]" value="18" />
                       </li>
                       <li>

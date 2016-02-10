@@ -210,6 +210,26 @@
         {
           location.reload();
         }, 1000 )
+      },
+      submit_coupon:function( resp, instance )
+      {
+        $(document).trigger( 'hide_loader' );
+
+        $.fn.form_msg.init( instance.form_msg );
+        $.fn.form_msg.remove_msg();
+
+        var total      = $('[data-checkout-total]'),
+            order_total = $('[data-order-total]')
+
+        if( resp.status )
+        {
+          total.html( resp.data.discount_html )
+          order_total.val( resp.data.discount_total );
+        }
+        else
+        {
+          $.fn.form_msg.add_msg( resp.message, 'error' )
+        }
       }
     },
     flyout:{
@@ -360,6 +380,8 @@
         this.trigger.click( this, function( e )
         {
           e.preventDefault();
+          $(document).trigger( 'toggle_flyout' );
+
           e.data.show_popup();
         })
 
@@ -395,9 +417,10 @@
       $.fn.popup.init( $('[data-trigger-popup]') );
 
     if( $('[data-flyout-trigger]')[0] != undefined && $('[data-flyout]')[0] != undefined )
+    {
       $.fn.flyout.init( $('[data-flyout]'), $('[data-flyout-trigger]') );
       $.fn.flyout.init_listeners();
-
+    }
 
 
     $.fn.ajax_get.init_listeners();

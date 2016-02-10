@@ -231,6 +231,38 @@ a:link{
   background-color:cornsilk;
 }
 
+[data-popup]{
+  position: absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100vh;
+  display: none;
+}
+
+[data-popup].active{
+  display: table;
+  text-align: center;
+}
+
+[data-popup] .table-cell{
+  vertical-align: middle;
+  background-color:rgba(0,0,0,0.95);
+  position: relative;
+}
+
+[data-popup] .popup{
+  max-width:600px;
+  margin: 0 auto;
+}
+[data-destroy-popup]{
+  position: absolute;
+  right:10px;
+  top:10px;
+  font-size:27px;
+}
+
+
 
 [data-form-msg]{
   margin:10px auto;
@@ -255,12 +287,23 @@ li.cart-item{
   text-align: center;
 }
 
+[data-checkout-total]{
+  text-align: center;
+}
+
+.checkout{
+  text-align: left;
+}
+
 
 
 .btn{
   color:#fff;
 }
-
+.btn-huge{
+  padding:20px 50px;
+  margin: 0 auto;
+}
 
 header h1 {
   font-family: 'Pacifico', cursive;
@@ -269,7 +312,10 @@ header h1 {
 	margin:-50px 0 30px 0 ;
 	text-shadow: 5px 5px 0 #fff, 10px 10px 0 #f5e778;
 }
-
+.checkout h1{
+  font-size:56px;
+  margin:12px 0;
+}
 .cart-body h2{
   margin-top:0;
 }
@@ -307,7 +353,6 @@ input:focus{
 select{
   height:50px;
   text-indent:10px;
-
 }
 form input[type="submit"]{
 	background: #ff708f; /* Old browsers */
@@ -329,10 +374,19 @@ form input[type="submit"]{
 form input[type="submit"]:hover{
 	background: #ff708f; /* Old browsers */
 }
+
+[data-ajax-form]{
+  margin-bottom:20px;
+}
 form ul{
   margin:0;
   padding:0;
   list-style:none;
+}
+form .inline{
+  display: table;
+  width:100%;
+  table-layout: fixed;
 }
 form li{
   padding-bottom:12px;
@@ -341,11 +395,22 @@ form li{
 form li.submit{
   text-align: right;
 }
-form li label{
+form label{
   display: block;
   width:100%;
   text-align: left;
   padding:12px 0;
+}
+
+form .inline li{
+  display: table-cell;
+  width:100%;
+  vertical-align: middle;
+  margin-bottom:25px;
+}
+
+form .inline li.submit{
+  width:180px;
 }
 
 .btn.btn-primary,

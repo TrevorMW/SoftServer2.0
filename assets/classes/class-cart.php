@@ -149,17 +149,6 @@ class Cart
   public function checkout_button()
   {
     $btn   = '';
-    $types = array();
-
-    if( is_array( $this->cart_items ) && !empty( $this->cart_items ) )
-    {
-      foreach( $this->cart_items as $item )
-      {
-        $type = new Product_Type( $item->product_type );
-
-        $types[] = '<input type="hidden" name="cart_product_types[]" value="'.$type->product_type_id.'" />';
-      }
-    }
 
     if( count( $this->cart_items ) > 0 )
     {
@@ -172,6 +161,32 @@ class Cart
   }
 
   /**
+   * get_cart_total function.
+   *
+   * @access public
+   * @return void
+   */
+  public function get_cart_total()
+  {
+    $total = array();
+
+    if( is_array( $this->cart_items ) && !empty( $this->cart_items ) )
+    {
+      foreach( $this->cart_items as $cart_item )
+      {
+        $type        = new Product_Type( $cart_item->product_type );
+        $ingredient  = new Ingredient();
+        $ingredients = $ingredient->load_product_ingredients( $cart_item->product_id );
+        $product     = new Product( $cart_item->product_id );
+
+        $total[] = $product->get_product_total_price( $product, $ingredients );
+      }
+    }
+
+    return array_sum( $total );
+  }
+
+  /**
    * get_checkout function.
    *
    * @access public
@@ -179,6 +194,29 @@ class Cart
    */
   public function get_checkout()
   {
+    $html     = '';
+    $types    = array();
+    $products = array();
 
+    if( is_array( $this->cart_items ) && !empty( $this->cart_items ) )
+    {
+      foreach( $this->cart_items as $item )
+      {
+        $type = new Product_Type( $item->product_type );
+
+        if( $type != 'cone' )
+        {
+          $types[] = '<input type="hidden" name="cart_product_types[]" value="'.$item->product_id.'" />';
+        }
+
+        $products[] = '<input type="hidden" name="cart_product[]" value="'.$item->product_id.'" />';
+      }
+    }
+
+    $data['checkout']['cart_total'] = $this->get_cart_total();
+    $data['checkout']['types']      = $types;
+    $data['checkout']['products']   = $products;
+
+    return Template_Helper::render_template( __TEMPLATE_PATH__, 'checkout', $data );
   }
 }

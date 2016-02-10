@@ -95,12 +95,12 @@ $current_user = User::load_current_user() ?>
     <div class="table popup-parent" data-popup="checkout">
       <div class="table-cell popup-background">
         <div class="popup">
+          <a href="#" data-destroy-popup><i class="fa fa-fw fa-times"></i></a>
           <header>
-            <h1>Checkout</h1>
-            <a href="#" data-destroy-popup><i class="fa fa-fw fa-times"></i></a>
+            <h2>Checkout</h2>
           </header>
           <section>
-            <?php echo $cart->get_checkout();?>
+            <?php echo $cart->get_checkout(); ?>
           </section>
         </div>
       </div>

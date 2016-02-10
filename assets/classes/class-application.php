@@ -60,7 +60,8 @@ class Application
 
                        'orders'              => 'order_id                   INT (11)      AUTO_INCREMENT PRIMARY KEY,
                                                  order_user_id              INT (11)      NOT NULL,
-                                                 order_status               VARCHAR (100) NOT NULL',
+                                                 order_status               VARCHAR (100) NOT NULL,
+                                                 order_total                FLOAT (11)    NOT NULL',
 
                        'order_items'          => 'order_id                  INT (11)      AUTO_INCREMENT PRIMARY KEY,
                                                   product_id                INT (11)      NOT NULL',

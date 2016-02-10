@@ -159,7 +159,7 @@ class Product
       $total = $total + array_sum( $add_ons );
     }
 
-    return Text_Helper::format_string_as_price( $total );
+    return $total;
   }
 
 }

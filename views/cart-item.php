@@ -13,7 +13,7 @@ if( is_array( $cart_item ) && !empty( $cart_item ) )
   }
 
   $html .= '<li class="cart-item">
-              <span>'.$cart_item['product_price_total'].'</span>
+              <span>'.Text_Helper::format_string_as_price( $cart_item['product_price_total'] ).'</span>
               <h2>'.$cart_item['product_type'].'</h2>
               <ul>'.$ingredients.'</ul>
             </li>';
